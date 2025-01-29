@@ -7,7 +7,7 @@
         if [[ $? == "0" ]]; then
             echo "Test $stem passed"
         else
-            echo "Test stem failed"
+            echo "Test $stem failed"
             echo "Expected output:"
             cat $stem.out
             echo "Actual output:"
