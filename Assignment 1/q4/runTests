@@ -2,7 +2,7 @@
 
  for stem in $(cat $2); do
     if [ -e "$stem.in" ]; then
-        ($1 $stem.args) < $stem.in > "actual.out"
+        ("$1 $stem.args") < $stem.in > "actual.out"
         diff -q actual.out $stem.out 1>/dev/null
         if [[ $? == "0" ]]; then
             echo "Test $stem passed"
