@@ -5,7 +5,7 @@
         $1 < $stem.in > "actual.out"
         diff -q actual.out $stem.out 1>/dev/null
         if [[ $? == "0" ]]; then
-            echo "Test stem passed"
+            echo "Test $stem passed"
         else
             echo "Test stem failed"
             echo "Expected output:"
