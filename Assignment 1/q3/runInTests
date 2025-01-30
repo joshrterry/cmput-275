@@ -1,18 +1,20 @@
 #!/bin/bash
 
- for stem in $(cat $2); do
+while read -r stem; do
     if [ -e "$stem.in" ]; then
-        $1 < $stem.in > "actual.out"
-        diff -q actual.out $stem.out 1>/dev/null
-        if [[ $? == "0" ]]; then
+        "$1" < "$stem.in" > "actual.out"
+
+        diff -q actual.out "$stem.out" 1>/dev/null
+        
+        if [ $? -eq 0 ]; then
             echo "Test $stem passed"
         else
             echo "Test $stem failed"
             echo "Expected output:"
-            cat $stem.out
+            cat "$stem.out"
             echo "Actual output:"
             cat actual.out
         fi
     fi
     rm actual.out
-done
+done < "$2"

@@ -7,12 +7,14 @@ int main() {
         return 1;
     }
 
+    int first = 1; // check if first divisor, then don't print leading space
     for (int i = 1; i <= num; i++) {
         if (num % i == 0) {
-            printf("%d", i);
-            if (i != num) {
+            if (!first) {
                 printf(" ");
             }
+            printf("%d", i);
+            first = 0;
         }
     }
     printf("\n");
