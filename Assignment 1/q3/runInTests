@@ -1,11 +1,9 @@
 #!/bin/bash
 
-while read -r stem; do
+ for stem in $(cat $2); do
     if [ -e "$stem.in" ]; then
         "$1" < "$stem.in" > "actual.out"
-
         diff -q actual.out "$stem.out" 1>/dev/null
-        
         if [ $? -eq 0 ]; then
             echo "Test $stem passed"
         else
@@ -17,4 +15,4 @@ while read -r stem; do
         fi
     fi
     rm actual.out
-done < "$2"
+done

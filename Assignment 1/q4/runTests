@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while read -r stem; do
+for stem in $(cat $2); do
     if [ -e "$stem.in" ]; then
         "$1" $(cat "$stem.args") < "$stem.in" > "actual.out"
 
@@ -17,4 +17,4 @@ while read -r stem; do
         fi
     fi
     rm actual.out
-done < "$2"
+done

@@ -4,10 +4,10 @@ if [ "$#" -ne 1 ]; then
     echo "Usage: ./testDescribe testSetFile" >&2
 fi
 
-while read -r stem; do
+for stem in cat $1; do
     if [ -e "$stem.desc" ]; then
         cat "$stem.desc"
     else
         echo "$stem No test description"
     fi
-done < "$1"
+done
