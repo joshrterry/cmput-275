@@ -37,11 +37,10 @@ int romanToInt(const char *s) {
 
 int main() {
     char roman[20]; // buffer for Roman numeral input
-    printf("Enter Roman numeral: ");
     scanf("%s", roman);
 
     int result = romanToInt(roman);
-    printf("Integer value: %d\n", result);
+    printf("%d\n", result);
 
     return 0;
 }
