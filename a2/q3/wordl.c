@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
     int attempts = 0;
 
     while (attempts < 6) {
+        setColour(WHITE);
         printf("Enter guess: ");
         scanf("%s", guess);
 
@@ -59,7 +60,7 @@ int main(int argc, char **argv) {
 
         // Reset color and print newline
         // setColour(WHITE);
-        // printf("\n");
+        printf("\n");
 
         // Check if the word is guessed correctly
         if (strcmp(guess, theWord) == 0) {
