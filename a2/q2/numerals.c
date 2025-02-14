@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-// Function to get the integer value of a Roman numeral
+// function to get the integer value of a roman numeral
 int romanValue(char c) {
     switch (c) {
         case 'I': return 1;
@@ -11,11 +11,11 @@ int romanValue(char c) {
         case 'C': return 100;
         case 'D': return 500;
         case 'M': return 1000;
-        default: return 0; // Invalid character
+        default: return 0; // defualt value for invalid characters
     }
 }
 
-// Function to convert Roman numeral string to integer
+// function to convert roman numeral string to integer
 int romanToInt(const char *s) {
     int total = 0;
     int length = strlen(s);
@@ -24,7 +24,7 @@ int romanToInt(const char *s) {
         int current = romanValue(s[i]);
         int next = (i + 1 < length) ? romanValue(s[i + 1]) : 0;
 
-        // If the next value is greater, subtract current value, else add it
+        // if the next value is greater, subtract current value, else add it
         if (current < next) {
             total -= current;
         } else {
@@ -36,7 +36,7 @@ int romanToInt(const char *s) {
 }
 
 int main() {
-    char roman[20]; // Buffer for Roman numeral input
+    char roman[20]; // buffer for Roman numeral input
     printf("Enter Roman numeral: ");
     scanf("%s", roman);
 

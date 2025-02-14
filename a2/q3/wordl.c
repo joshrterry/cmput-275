@@ -18,9 +18,9 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    char *theWord = argv[1];  // Secret word from command-line argument
+    char *theWord = argv[1];  // secret word from command-line argument
     int wordLen = strlen(theWord);
-    char guess[20];  // Assumption: words are at most 12 chars, so buffer is safe
+    char guess[20];  // words are at most 12 chars, so include a small buffer past that
     int attempts = 0;
 
     while (attempts < 6) {
@@ -33,36 +33,35 @@ int main(int argc, char **argv) {
             continue;
         }
 
-        int correct[20] = {0};  // Tracks green letters
-        int counts[26] = {0};   // Letter frequency in secret word
+        int correct[20] = {0};  // tracks green letters
+        int counts[26] = {0};   // letter frequency in secret word
 
-        // First pass: Mark correct (green) letters
+        // first time around, mark correct (green) letters
         for (int i = 0; i < wordLen; i++) {
             if (theWord[i] == guess[i]) {
-                correct[i] = 2;  // Mark as green
+                correct[i] = 2;  // mark as green
             } else {
-                counts[theWord[i] - 'a']++;  // Count occurrences of remaining letters
+                counts[theWord[i] - 'a']++;  // count occurrences of remaining letters
             }
         }
 
-        // Second pass: Determine yellow and white letters
+        // second time around, determine yellow and white letters
         for (int i = 0; i < wordLen; i++) {
             if (correct[i] == 2) {
                 setColour(GREEN);
             } else if (counts[guess[i] - 'a'] > 0) {
                 setColour(YELLOW);
-                counts[guess[i] - 'a']--;  // Reduce available occurrences
+                counts[guess[i] - 'a']--;  // reduce available occurrences
             } else {
                 setColour(WHITE);
             }
             printf("%c", guess[i]);
         }
 
-        // Reset color and print newline
-        // setColour(WHITE);
+        // print newline
         printf("\n");
 
-        // Check if the word is guessed correctly
+        // check if the word is guessed correctly
         if (strcmp(guess, theWord) == 0) {
             setColour(WHITE);
             printf("Finished in %d guesses\n", attempts + 1);
