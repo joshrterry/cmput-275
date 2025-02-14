@@ -14,8 +14,7 @@ void setColour(const char *colour) {
 
 int main(int argc, char **argv) {
     if (argc != 2) {
-        printf("Usage: %s word", argv[0]);
-        printf("\n");
+        printf("Usage: %s word\n", argv[0]);
         return 1;
     }
 
@@ -59,8 +58,8 @@ int main(int argc, char **argv) {
         }
 
         // Reset color and print newline
-        setColour(WHITE);
-        printf("\n");
+        // setColour(WHITE);
+        // printf("\n");
 
         // Check if the word is guessed correctly
         if (strcmp(guess, theWord) == 0) {
