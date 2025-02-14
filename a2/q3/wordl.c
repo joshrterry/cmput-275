@@ -64,6 +64,7 @@ int main(int argc, char **argv) {
 
         // Check if the word is guessed correctly
         if (strcmp(guess, theWord) == 0) {
+            setColour(WHITE);
             printf("Finished in %d guesses\n", attempts + 1);
             return 0;
         }
@@ -71,6 +72,7 @@ int main(int argc, char **argv) {
         attempts++;
     }
 
+    setColour(WHITE);
     printf("Failed to guess the word: %s\n", theWord);
     return 0;
 }
