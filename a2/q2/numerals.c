@@ -36,7 +36,7 @@ int romanToInt(const char *s) {
 }
 
 int main() {
-    char roman[20]; // buffer for Roman numeral input
+    char roman[20000]; // buffer for Roman numeral input
     scanf("%s", roman);
 
     int result = romanToInt(roman);
