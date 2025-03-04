@@ -11,7 +11,8 @@ int main() {
     
     while ((ch = getchar()) >= '0' && ch <= '9') {
         int digit = ch - '0'; // convert from char to int
-        
+        printf("Digit looking at now: %d\n", digit);
+
         if (check_digit == -1) {
             check_digit = digit; // Store the last digit as check digit
         } else {
