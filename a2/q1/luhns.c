@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// TEST CASE THAT FAILS: 123455
+
 int main() {
     int sum = 0;
     int pos = 0; // position from right (1-based)
@@ -20,7 +22,9 @@ int main() {
                     digit -= 9;
                 }
             }
+            printf("Digit to add: %d\n", digit);
             sum += digit;
+            printf("New sum: %d\n", sum);
         }
     }
     
