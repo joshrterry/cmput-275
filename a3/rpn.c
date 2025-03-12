@@ -4,7 +4,7 @@
 
 // node for linked list
 struct Node {
-    float data;
+    int data;
     struct Node *next;
 };
 
@@ -20,7 +20,7 @@ struct List *mkList() {
     return ret;
 };
 
-struct List *push(struct List *l, float val) {
+struct List *push(struct List *l, int val) {
     struct Node *node = malloc(sizeof(struct Node));
     node->data = val;
     node->next = l->head;
@@ -29,9 +29,9 @@ struct List *push(struct List *l, float val) {
     return l;
 }
 
-float pop(struct List *l) {
+int pop(struct List *l) {
     struct Node *tmp = l->head;
-    float retval = tmp->data;
+    int retval = tmp->data;
     l->head = l->head->next;
     free(tmp);
     l->len = l->len-1;
@@ -56,10 +56,28 @@ int main() {
                 // This shouldn't happen, just a safety check
                 printf("Unexpected number as char: %c\n", ch);
             } else {
-                float b = pop(ll);
-                float a = pop(ll);
+                int b = pop(ll);
+                int a = pop(ll);
+                int result = -1;
                 
-                float result = a + b;
+                switch (ch) {
+                    case 'p':
+                        result = a + b;
+                        break;
+                    case 's':
+                        result = a - b;
+                        break;
+                    case '*':
+                        result = a * b;
+                        break;
+                    case '/':
+                        result = a / b;
+                        break;
+                    // default:
+                    //     printf("Invalid operator detected.\n");
+                }
+                // printf("%d", result);
+                
                 push(ll, result);
 
 
@@ -71,6 +89,6 @@ int main() {
         }
     }
 
-    printf("%f\n", pop(ll));
+    printf("\n%d\n", pop(ll));
 
 }
