@@ -89,6 +89,6 @@ int main() {
         }
     }
 
-    printf("\n%d\n", pop(ll));
+    printf("%d\n", pop(ll));
 
 }
