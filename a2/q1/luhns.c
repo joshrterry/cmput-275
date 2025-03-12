@@ -5,36 +5,41 @@
 
 int main() {
     int sum = 0;
-    int pos = 0; // position from right (1-based)
-    int check_digit = -1;
-    char ch;
-    
-    while ((ch = getchar()) >= '0' && ch <= '9') {
-        int digit = ch - '0'; // convert from char to int
+    int is_second = 0;
+    int digit;
+    long long card_no;
 
-        if (check_digit == -1) {
-            check_digit = digit; // Store the last digit as check digit
-            printf("storing: %d as the check digit\n", digit);
-        } else {
-            pos++;
-            if (pos % 2 == 1) { // Double every second digit from the right
-                digit *= 2;
-                if (digit >= 10) {
-                    digit -= 9;
-                }
+    scanf("%lld", &card_no);
+
+    while (card_no > 0) {
+        digit = card_no % 10; // Extract the last digit
+        card_no /= 10; // Remove the last digit
+        // printf("card_no: %lld, digit: %d\n", card_no, digit);
+
+        if (is_second) {
+            digit *= 2; // Double every second digit
+            if (digit > 9) {
+                digit -= 9; // Equivalent to adding individual digits (e.g., 12 → 1 + 2 = 3)
             }
-            printf("Digit to add: %d\n", digit);
-            sum += digit;
-            printf("New sum: %d\n", sum);
         }
+
+        sum += digit; // Add to total sum
+        // printf("digit added: %d, newsum: %d\n", digit, sum);
+
+
+        is_second = !is_second; // Toggle the flag for next iteration
     }
-    
+    sum -= digit;
     sum *= 9;
-    if (sum % 10 == check_digit) {
+
+    // printf("%d\n", sum);
+    // printf("%d\n", sum % 10);
+
+    if (sum % 10 == digit) {
         printf("Valid\n");
     } else {
         printf("Invalid\n");
     }
+
     
-    return 0;
 }

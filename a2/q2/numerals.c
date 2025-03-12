@@ -36,6 +36,9 @@ int romanToInt(const char *s) {
 }
 
 int main() {
+
+    // THIS NEEDS TO BE IMPLEMENTED WITHOUT AN ARRAY
+
     char roman[20000]; // buffer for Roman numeral input
     scanf("%s", roman);
 

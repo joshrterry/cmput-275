@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/joshuaterry/Desktop/cmput-275/a2/q1/luhns'
+relocations:     []
+...
