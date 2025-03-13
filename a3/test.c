@@ -35,6 +35,7 @@ void processCommands() {
     }
 }
 
+
 int main() {
     processCommands();
     return 0;
