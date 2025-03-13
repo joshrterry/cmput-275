@@ -192,22 +192,5 @@ int main() {
     struct Set *y = mkset();
 
     processCommands(x, y);
-    // add(a, 0);
-    // add(a, -192837);
-    // add(a, 2);
-    // add(a, 2);
-    // add(b, 2);
-    // add(b, 3);
-    // add(b, -10);
-    // add(b, -192837);
-
-    // printSet(a);
-    // printSet(b);
-
-    // struct Set *c = setUnion(a, b);
-    // struct Set *d = setIntersect(a, b);
-
-    // printSet(c);
-    // printSet(d);
 
 }
