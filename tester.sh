@@ -1,69 +1,78 @@
 #!/bin/bash
 
+# Function to display usage
+usage() {
+    echo "Usage: $0 [-l] <exec1> <exec2> <test_cases_file> [args_file]"
+    exit 1
+}
+
+# Check if the script has at least 3 arguments
+long_output=false
+if [ "$1" == "-l" ]; then
+    long_output=true
+    shift
+fi
+
 if [ "$#" -lt 3 ]; then
-    echo "Usage: $0 <your_executable> <reference_executable> <test_cases_file> [-l]"
+    usage
+fi
+
+exec1=$1
+exec2=$2
+test_file=$3
+args_file=$4
+
+# Check if executables and test file exist
+if [ ! -x "$exec1" ] || [ ! -x "$exec2" ] || [ ! -f "$test_file" ]; then
+    echo "Error: One or more files are missing or not executable."
     exit 1
 fi
 
-LONG_OUTPUT=false
-if [ "$#" -eq 4 ] && [ "$4" == "-l" ]; then
-    LONG_OUTPUT=true
+# Read optional arguments
+args=""
+if [ -n "$args_file" ] && [ -f "$args_file" ]; then
+    args=$(cat "$args_file")
 fi
 
-YOUR_EXEC="$1"
-REF_EXEC="$2"
-TEST_FILE="$3"
-
-if [ ! -x "$YOUR_EXEC" ]; then
-    echo "Error: $YOUR_EXEC is not an executable file."
-    exit 1
-fi
-
-if [ ! -x "$REF_EXEC" ]; then
-    echo "Error: $REF_EXEC is not an executable file."
-    exit 1
-fi
-
-if [ ! -f "$TEST_FILE" ]; then
-    echo "Error: Test file $TEST_FILE does not exist."
-    exit 1
-fi
-
-TEST_COUNT=0
-MISMATCH_COUNT=0
-
-while IFS= read -r line || [ -n "$line" ]; do
-    TEST_COUNT=$((TEST_COUNT + 1))
-    
-    echo "Test Case #$TEST_COUNT: $line"
-    
-    YOUR_OUTPUT=$(echo "$line" | "$YOUR_EXEC")
-    REF_OUTPUT=$(echo "$line" | "$REF_EXEC")
-    
-    if [ "$YOUR_OUTPUT" != "$REF_OUTPUT" ]; then
-        echo "Mismatch found!"
-        if [ "$LONG_OUTPUT" = true ]; then
-            echo "Your Output:"
-            echo "$YOUR_OUTPUT"
-            echo "Expected Output:"
-            echo "$REF_OUTPUT"
-        else
-            echo "Your Output: $(echo "$YOUR_OUTPUT" | head -n 1) ... (truncated)"
-            echo "Expected Output: $(echo "$REF_OUTPUT" | head -n 1) ... (truncated)"
+# Read test cases separated by blank lines
+test_cases=()
+current_case=""
+while IFS= read -r line || [[ -n "$line" ]]; do
+    if [[ -z "$line" ]]; then
+        if [[ -n "$current_case" ]]; then
+            test_cases+=("$current_case")
+            current_case=""
         fi
-        MISMATCH_COUNT=$((MISMATCH_COUNT + 1))
     else
-        echo "Test Passed."
+        current_case+="$line
+"
     fi
-    
-    echo "------------------------------------"
-done < "$TEST_FILE"
+done < "$test_file"
 
-echo "Total test cases run: $TEST_COUNT"
-echo "Mismatched cases: $MISMATCH_COUNT"
-
-if [ "$MISMATCH_COUNT" -eq 0 ]; then
-    echo "All test cases passed!"
-else
-    echo "Some test cases failed."
+# Add last test case if not empty
+if [[ -n "$current_case" ]]; then
+    test_cases+=("$current_case")
 fi
+
+# Run test cases and compare outputs
+for ((i=0; i<${#test_cases[@]}; i++)); do
+    test_input="${test_cases[$i]}"
+    
+    actual_output=$(echo -e "$test_input" | "$exec1" $args)
+    expected_output=$(echo -e "$test_input" | "$exec2" $args)
+    
+    if [ "$actual_output" != "$expected_output" ]; then
+        echo "Test Case $((i+1)) FAILED"
+        if $long_output; then
+            echo "Input:"
+            echo -e "$test_input"
+            echo "Actual Output:"
+            echo "$actual_output"
+            echo "Expected Output:"
+            echo "$expected_output"
+            echo "------------------------"
+        fi
+    else
+        echo "Test Case $((i+1)) PASSED"
+    fi
+done
