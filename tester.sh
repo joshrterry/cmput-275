@@ -1,8 +1,13 @@
 #!/bin/bash
 
-if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 <your_executable> <reference_executable> <test_cases_file>"
+if [ "$#" -lt 3 ]; then
+    echo "Usage: $0 <your_executable> <reference_executable> <test_cases_file> [-l]"
     exit 1
+fi
+
+LONG_OUTPUT=false
+if [ "$#" -eq 4 ] && [ "$4" == "-l" ]; then
+    LONG_OUTPUT=true
 fi
 
 YOUR_EXEC="$1"
@@ -27,35 +32,34 @@ fi
 TEST_COUNT=0
 MISMATCH_COUNT=0
 
-while IFS= read -r line; do
-    if [[ -z "$line" ]]; then
-        continue
+while IFS= read -r line || [ -n "$line" ]; do
+    TEST_COUNT=$((TEST_COUNT + 1))
+    
+    echo "Test Case #$TEST_COUNT: $line"
+    
+    YOUR_OUTPUT=$(echo "$line" | "$YOUR_EXEC")
+    REF_OUTPUT=$(echo "$line" | "$REF_EXEC")
+    
+    if [ "$YOUR_OUTPUT" != "$REF_OUTPUT" ]; then
+        echo "Mismatch found!"
+        if [ "$LONG_OUTPUT" = true ]; then
+            echo "Your Output:"
+            echo "$YOUR_OUTPUT"
+            echo "Expected Output:"
+            echo "$REF_OUTPUT"
+        else
+            echo "Your Output: $(echo "$YOUR_OUTPUT" | head -n 1) ... (truncated)"
+            echo "Expected Output: $(echo "$REF_OUTPUT" | head -n 1) ... (truncated)"
+        fi
+        MISMATCH_COUNT=$((MISMATCH_COUNT + 1))
+    else
+        echo "Test Passed."
     fi
     
-    TEST_CASE+="$line
-"
+    echo "------------------------------------"
 done < "$TEST_FILE"
 
-echo "Running test case:"
-echo -e "$TEST_CASE"
-
-YOUR_OUTPUT=$(echo -e "$TEST_CASE" | "$YOUR_EXEC")
-REF_OUTPUT=$(echo -e "$TEST_CASE" | "$REF_EXEC")
-
-if [ "$YOUR_OUTPUT" != "$REF_OUTPUT" ]; then
-    echo "Mismatch found!"
-    echo "Your Output:"
-    echo "$YOUR_OUTPUT"
-    echo "Expected Output:"
-    echo "$REF_OUTPUT"
-    MISMATCH_COUNT=$((MISMATCH_COUNT + 1))
-else
-    echo "Test Passed."
-fi
-
-echo "------------------------------------"
-
-echo "Total test cases run: 1"
+echo "Total test cases run: $TEST_COUNT"
 echo "Mismatched cases: $MISMATCH_COUNT"
 
 if [ "$MISMATCH_COUNT" -eq 0 ]; then
