@@ -52,11 +52,9 @@ void applySepia(int width, int height, Pixel *image) {
 void printPPM(const char *format, int width, int height, int maxColor, Pixel *image) {
     printf("%s\n%d %d\n%d\n", format, width, height, maxColor);
     for (int i = 0; i < width * height; i++) {
-        printf("%d %d %d", image[i].r, image[i].g, image[i].b);
+        printf("%d %d %d ", image[i].r, image[i].g, image[i].b);
         if ((i + 1) % width == 0) {
             printf("\n");  // New row
-        } else {
-            printf(" ");  // Space between pixels
         }
     }
 }
