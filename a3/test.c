@@ -1,29 +1,41 @@
 #include <stdio.h>
 
-int main() {
-    int num;
-    char ch;
-
-    printf("Enter input: ");
+void processCommands() {
+    char command, target;
+    int value;
 
     while (1) {
-        // Try to read an integer
-        if (scanf("%d", &num) == 1) {
-            printf("Read integer: %d\n", num);
-        } 
-        else if (scanf(" %c", &ch) == 1) { 
-            // Read a non-integer character after skipping whitespace
-            if ((ch >= '0' && ch <= '9')) {
-                // This shouldn't happen, just a safety check
-                printf("Unexpected number as char: %c\n", ch);
-            } else {
-                printf("Read non-integer: %c\n", ch);
-            }
-        } 
-        else {
-            break; // Stop reading on EOF
+        command = getchar();  // Read the command
+        
+        if (command == EOF) {
+            break; // Exit on EOF (Ctrl+D or Ctrl+Z)
         }
-    }
 
+        if (command == 'q') {
+            break; // Quit the program
+        }
+        else if (command == 'u' || command == 'i') {
+            printf("Command: %c\n", command);
+        }
+        else if (command == 'p') {
+            if (scanf(" %c", &target) == 1) {
+                printf("Command: %c, Target: %c\n", command, target);
+            }
+        }
+        else if (command == 'a' || command == 'r') {
+            if (scanf(" %c %d", &target, &value) == 2) {
+                printf("Command: %c, Target: %c, Value: %d\n", command, target, value);
+            }
+        }
+        else if (command != '\n' && command != ' ') { // Ignore spaces & newlines
+            printf("Invalid command: %c\n", command);
+        }
+
+        while (getchar() != '\n' && getchar() != EOF); // Clear input buffer
+    }
+}
+
+int main() {
+    processCommands();
     return 0;
 }
