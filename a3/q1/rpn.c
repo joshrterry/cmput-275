@@ -45,45 +45,44 @@ int main() {
     char ch;
 
     while (1) {
-        // Try to read an integer
-        if (scanf("%d", &num) == 1) {
+        // Skip leading whitespace and attempt to read an integer
+        if (scanf(" %d", &num) == 1) {
             push(ll, num);
         } 
-        else if (scanf(" %c", &ch) == 1) {             
-
-            // Read a non-integer character after skipping whitespace
-            if ((ch >= '0' && ch <= '9')) {
-                // This shouldn't happen, just a safety check
-                printf("Unexpected number as char: %c\n", ch);
-            } else {
-                int b = pop(ll);
-                int a = pop(ll);
-                int result = -1;
-                
-                switch (ch) {
-                    case 'p':
-                        result = a + b;
-                        break;
-                    case 's':
-                        result = a - b;
-                        break;
-                    case '*':
-                        result = a * b;
-                        break;
-                    case '/':
-                        result = a / b;
-                        break;
-                    // default:
-                    //     printf("Invalid operator detected.\n");
-                }
-                // printf("%d", result);
-                
-                push(ll, result);
-
-
+        // If not a number, try to read a character (operator)
+        else if (scanf(" %c", &ch) == 1) {  
+            if (ch == '\n') {
+                continue;  // Ignore newlines and keep processing input
             }
+            
+            int b = pop(ll);
+            int a = pop(ll);
+            int result = -1;
+
+            switch (ch) {
+                case 'p':
+                    result = a + b;
+                    break;
+                case 's':
+                    result = a - b;
+                    break;
+                case '*':
+                    result = a * b;
+                    break;
+                case '/':
+                    if (b == 0) {
+                        printf("Error: Division by zero\n");
+                        exit(1);
+                    }
+                    result = a / b;
+                    break;
+                default:
+                    printf("Invalid operator: %c\n", ch);
+                    exit(1);
+            }
+
+            push(ll, result);
         } 
-         
         else {
             break; // Stop reading on EOF
         }

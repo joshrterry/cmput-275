@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct Node {
     int data;
@@ -135,54 +136,47 @@ void processCommands(struct Set *x, struct Set *y) {
     int value;
 
     while (1) {
-        command = getchar(); // Read the command
-        if (command == ' ' || command == '\t' || command == '\n') {
-            continue;
-        }
-        else if (command == 'q') {
-            break; // Quit program
+        // Read the first command
+        int result = scanf(" %c", &command);
+
+        // Exit on EOF
+        if (result == EOF) {
+            break;
         }
 
-        else if (command == 'u') {
+        if (command == 'q') {
+            return; // Quit program
+        } else if (command == 'u') {
             printSet(setUnion(x, y));
-            
-        } 
-        else if (command == 'i') {
+        } else if (command == 'i') {
             printSet(setIntersect(x, y));
-            
-        }
-        else if (command == 'p') {
-            scanf(" %c", &target); // Read the set target (x or y)
-            if (target == 'x') {
-                printSet(x);
-            } else if (target == 'y') {
-                printSet(y);
+        } else if (command == 'p') {
+            if (scanf(" %c", &target) == 1) { // Read set name (x or y)
+                if (target == 'x') {
+                    printSet(x);
+                } else if (target == 'y') {
+                    printSet(y);
+                }
             }
-            
-        } 
-        else if (command == 'a') {
-            scanf(" %c %d", &target, &value); // Read target and integer
-            if (target == 'x') {
-                add(x, value);
-            } else if (target == 'y') {
-                add(y, value);
+        } else if (command == 'a') {
+            if (scanf(" %c %d", &target, &value) == 2) { // Read set and value
+                if (target == 'x') {
+                    add(x, value);
+                } else if (target == 'y') {
+                    add(y, value);
+                }
             }
-            
-        }
-        else if (command == 'r') {
-            scanf(" %c %d", &target, &value); // Read target and integer
-            if (target == 'x') {
-                delete(x, value);
-            } else if (target == 'y') {
-                delete(y, value);
+        } else if (command == 'r') {
+            if (scanf(" %c %d", &target, &value) == 2) { // Read set and value
+                if (target == 'x') {
+                    delete(x, value);
+                } else if (target == 'y') {
+                    delete(y, value);
+                }
             }
-            
-        }
-        else {
+        } else {
             printf("Invalid command: %c\n", command);
         }
-
-        while (getchar() != '\n'); // Clear input buffer
     }
 }
 
