@@ -92,7 +92,7 @@ void printMaze(struct Maze *maze) {
         printf("|\n");
     }
     
-    for (int i = 0; i < maze->cols + 2; i++) printf("=");
+    for (int i = 0; i < maze->cols + 2; i++) printf("-");
     printf("\n");
 }
 
