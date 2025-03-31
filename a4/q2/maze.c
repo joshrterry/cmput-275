@@ -4,11 +4,8 @@
 #include <assert.h>
 #include "maze.h"
 
-#define MAX_ROWS 100
-#define MAX_COLS 100
-
 struct Maze {
-    char grid[MAX_ROWS][MAX_COLS];
+    char **grid;
     int rows, cols;
     struct Pos start;
     struct Pos player;
@@ -18,37 +15,41 @@ struct Maze *readMaze() {
     struct Maze *maze = malloc(sizeof(struct Maze));
     if (!maze) return NULL;
     
-    char line[MAX_COLS + 2]; // +2 for newline and null terminator
-    int row = 0, start_count = 0, goal_count = 0;
+    maze->grid = NULL;
+    maze->rows = 0;
+    maze->cols = 0;
+    char line[1024];
+    int start_count = 0, goal_count = 0;
     
     while (fgets(line, sizeof(line), stdin) && line[0] != '\n') {
         int len = strlen(line);
         if (line[len - 1] == '\n') line[len - 1] = '\0';
         
-        if (row >= MAX_ROWS || len - 1 >= MAX_COLS) {
-            free(maze);
-            return NULL;
+        maze->grid = realloc(maze->grid, (maze->rows + 1) * sizeof(char *));
+        maze->grid[maze->rows] = strdup(line);
+        
+        if (maze->cols < len - 1) {
+            maze->cols = len - 1;
         }
         
-        strcpy(maze->grid[row], line);
         for (int col = 0; col < len - 1; col++) {
             if (line[col] == 'S') {
-                maze->start = (struct Pos){col, row};
+                maze->start = (struct Pos){col, maze->rows};
                 start_count++;
             } else if (line[col] == 'G') {
                 goal_count++;
             }
         }
-        row++;
+        maze->rows++;
     }
     
     if (start_count != 1 || goal_count < 1) {
+        for (int i = 0; i < maze->rows; i++) free(maze->grid[i]);
+        free(maze->grid);
         free(maze);
         return NULL;
     }
     
-    maze->rows = row;
-    maze->cols = strlen(maze->grid[0]);
     maze->player = maze->start;
     return maze;
 }
@@ -102,7 +103,7 @@ void reset(struct Maze *maze) {
 }
 
 void printMaze(struct Maze *maze) {
-    for (int i = 0; i < maze->cols + 2; i++) printf("=");
+    for (int i = 0; i < maze->cols + 2; i++) printf("-");
     printf("\n");
     
     for (int y = 0; y < maze->rows; y++) {
@@ -114,11 +115,13 @@ void printMaze(struct Maze *maze) {
         printf("|\n");
     }
     
-    for (int i = 0; i < maze->cols + 2; i++) printf("=");
+    for (int i = 0; i < maze->cols + 2; i++) printf("-");
     printf("\n");
 }
 
 struct Maze *destroyMaze(struct Maze *maze) {
+    for (int i = 0; i < maze->rows; i++) free(maze->grid[i]);
+    free(maze->grid);
     free(maze);
     return NULL;
 }
