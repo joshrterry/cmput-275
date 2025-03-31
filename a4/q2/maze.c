@@ -63,15 +63,37 @@ struct Pos makeMove(struct Maze *maze, char direction) {
     int nx = maze->player.x + dx;
     int ny = maze->player.y + dy;
     
-    if (nx < 0 || ny < 0 || ny >= maze->rows || nx >= maze->cols || maze->grid[ny][nx] == 'X') {
-        return maze->player;
+    while (nx >= 0 && ny >= 0 && ny < maze->rows && nx < maze->cols && maze->grid[ny][nx] != 'X') {
+        maze->player.x = nx;
+        maze->player.y = ny;
+        
+        if (maze->grid[ny][nx] == 'G') {
+            return (struct Pos){-1, -1};
+        }
+        
+        if (isdigit(maze->grid[ny][nx])) {
+            char teleport = maze->grid[ny][nx];
+            for (int r = 0; r < maze->rows; r++) {
+                for (int c = 0; c < maze->cols; c++) {
+                    if (maze->grid[r][c] == teleport && (r != ny || c != nx)) {
+                        nx = c;
+                        ny = r;
+                        maze->player.x = nx;
+                        maze->player.y = ny;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        if (maze->grid[ny][nx] != 'I') {
+            break;
+        }
+        
+        nx += dx;
+        ny += dy;
     }
     
-    maze->player.x = nx;
-    maze->player.y = ny;
-    if (maze->grid[ny][nx] == 'G') {
-        return (struct Pos){-1, -1};
-    }
     return maze->player;
 }
 
@@ -80,7 +102,7 @@ void reset(struct Maze *maze) {
 }
 
 void printMaze(struct Maze *maze) {
-    for (int i = 0; i < maze->cols + 2; i++) printf("-");
+    for (int i = 0; i < maze->cols + 2; i++) printf("=");
     printf("\n");
     
     for (int y = 0; y < maze->rows; y++) {
@@ -92,7 +114,7 @@ void printMaze(struct Maze *maze) {
         printf("|\n");
     }
     
-    for (int i = 0; i < maze->cols + 2; i++) printf("-");
+    for (int i = 0; i < maze->cols + 2; i++) printf("=");
     printf("\n");
 }
 
