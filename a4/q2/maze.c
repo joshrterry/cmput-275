@@ -80,7 +80,7 @@ void reset(struct Maze *maze) {
 }
 
 void printMaze(struct Maze *maze) {
-    for (int i = 0; i < maze->cols + 2; i++) printf("=");
+    for (int i = 0; i < maze->cols + 2; i++) printf("-");
     printf("\n");
     
     for (int y = 0; y < maze->rows; y++) {
