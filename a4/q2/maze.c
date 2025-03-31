@@ -71,7 +71,7 @@ struct Pos makeMove(struct Maze *maze, char direction) {
             return (struct Pos){-1, -1};
         }
         
-        if (isdigit(maze->grid[ny][nx])) {
+        if (maze->grid[ny][nx] >= '0' && maze->grid[ny][nx] <= '9') {
             char teleport = maze->grid[ny][nx];
             for (int r = 0; r < maze->rows; r++) {
                 for (int c = 0; c < maze->cols; c++) {
