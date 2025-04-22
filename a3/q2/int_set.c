@@ -26,6 +26,18 @@ struct Node *mkNode() {
     return ret;
 }
 
+void freeSet(struct Set *set) {
+    if (!set) return;
+    
+    struct Node *current = set->head;
+    while (current != NULL) {
+        struct Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(set);
+}
+
 struct Node *checkInSet(struct Set *cur_set, int targ) {
     struct Node *prev_node = cur_set->head;
     struct Node *cur_node = cur_set->head;
@@ -52,7 +64,6 @@ void printSet(struct Set *cur_set) {
     }
 }
 
-
 void add(struct Set *cur_set, int elem) {
     struct Node *cur_node = cur_set->head;
     struct Node *new_elem = mkNode();
@@ -67,20 +78,24 @@ void add(struct Set *cur_set, int elem) {
                 if (cur_node->data > elem) {
                     new_elem->next = cur_set->head;
                     cur_set->head = new_elem;
+                    ++cur_set->len;
                     return;
                 } else if (cur_node->next == NULL) {
                     cur_node->next = new_elem;
+                    ++cur_set->len;
                     return;
                 }
                 else if (cur_node->next->data > elem) {
                     new_elem->next = cur_node->next;
                     cur_node->next = new_elem;
+                    ++cur_set->len;
                     return;
                 }
 
                 cur_node = cur_node->next;
             }
-            ++cur_set->len;
+        } else {
+            free(new_elem);  // Free the node if element already exists
         }
     }
 }
@@ -88,14 +103,16 @@ void add(struct Set *cur_set, int elem) {
 void delete(struct Set *cur_set, int elem) {
     struct Node *prev_node = checkInSet(cur_set, elem);
     if (prev_node) {
+        struct Node *to_delete;
         if (elem == cur_set->head->data) {
+            to_delete = cur_set->head;
             cur_set->head = cur_set->head->next;
         } else {
+            to_delete = prev_node->next;
             prev_node->next = prev_node->next->next;
         }
-        // if elem is head, bypass head
-
-        // else, ckeck cur_node->next
+        free(to_delete);
+        --cur_set->len;
     }
 }
 
@@ -104,13 +121,13 @@ struct Set *setUnion(struct Set *set_1, struct Set *set_2) {
 
     struct Node *cur_node = set_1->head;
     while (cur_node != NULL) {
-        add(setUnion, cur_node->data);  // Copy elements from set_1
+        add(setUnion, cur_node->data);
         cur_node = cur_node->next;
     }
 
     cur_node = set_2->head;
     while (cur_node != NULL) {
-        add(setUnion, cur_node->data);  // Copy elements from set_2
+        add(setUnion, cur_node->data);
         cur_node = cur_node->next;
     }
 
@@ -118,12 +135,12 @@ struct Set *setUnion(struct Set *set_1, struct Set *set_2) {
 }
 
 struct Set *setIntersect(struct Set *set_1, struct Set *set_2) {
-    struct Set *setIntersect = mkset(); // Create a new empty set
+    struct Set *setIntersect = mkset();
 
     struct Node *cur_node = set_1->head;
     while (cur_node != NULL) {
         if (checkInSet(set_2, cur_node->data)) {
-            add(setIntersect, cur_node->data); // Add only if present in both sets
+            add(setIntersect, cur_node->data);
         }
         cur_node = cur_node->next;
     }
@@ -136,22 +153,24 @@ void processCommands(struct Set *x, struct Set *y) {
     int value;
 
     while (1) {
-        // Read the first command
         int result = scanf(" %c", &command);
 
-        // Exit on EOF
         if (result == EOF) {
             break;
         }
 
         if (command == 'q') {
-            return; // Quit program
+            return;
         } else if (command == 'u') {
-            printSet(setUnion(x, y));
+            struct Set *union_set = setUnion(x, y);
+            printSet(union_set);
+            freeSet(union_set);
         } else if (command == 'i') {
-            printSet(setIntersect(x, y));
+            struct Set *intersect_set = setIntersect(x, y);
+            printSet(intersect_set);
+            freeSet(intersect_set);
         } else if (command == 'p') {
-            if (scanf(" %c", &target) == 1) { // Read set name (x or y)
+            if (scanf(" %c", &target) == 1) {
                 if (target == 'x') {
                     printSet(x);
                 } else if (target == 'y') {
@@ -159,7 +178,7 @@ void processCommands(struct Set *x, struct Set *y) {
                 }
             }
         } else if (command == 'a') {
-            if (scanf(" %c %d", &target, &value) == 2) { // Read set and value
+            if (scanf(" %c %d", &target, &value) == 2) {
                 if (target == 'x') {
                     add(x, value);
                 } else if (target == 'y') {
@@ -167,7 +186,7 @@ void processCommands(struct Set *x, struct Set *y) {
                 }
             }
         } else if (command == 'r') {
-            if (scanf(" %c %d", &target, &value) == 2) { // Read set and value
+            if (scanf(" %c %d", &target, &value) == 2) {
                 if (target == 'x') {
                     delete(x, value);
                 } else if (target == 'y') {
@@ -180,11 +199,15 @@ void processCommands(struct Set *x, struct Set *y) {
     }
 }
 
-
 int main() {
     struct Set *x = mkset();
     struct Set *y = mkset();
 
     processCommands(x, y);
 
+    // Free memory before exiting
+    freeSet(x);
+    freeSet(y);
+
+    return 0;
 }
