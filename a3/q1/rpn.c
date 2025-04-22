@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 // node for linked list
 struct Node {
     int data;
@@ -19,6 +18,21 @@ struct List *mkList() {
     ret->len = 0;
     return ret;
 };
+
+void freeList(struct List *l) {
+    if (!l) return;
+    
+    // Free all nodes
+    struct Node *current = l->head;
+    while (current != NULL) {
+        struct Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    
+    // Free the list structure itself
+    free(l);
+}
 
 struct List *push(struct List *l, int val) {
     struct Node *node = malloc(sizeof(struct Node));
@@ -72,12 +86,14 @@ int main() {
                 case '/':
                     if (b == 0) {
                         printf("Error: Division by zero\n");
+                        freeList(ll);  // Free memory before exiting
                         exit(1);
                     }
                     result = a / b;
                     break;
                 default:
                     printf("Invalid operator: %c\n", ch);
+                    freeList(ll);  // Free memory before exiting
                     exit(1);
             }
 
@@ -88,6 +104,12 @@ int main() {
         }
     }
 
-    printf("%d\n", pop(ll));
-    free(ll);
+    if (ll->len == 1) {
+        printf("%d\n", pop(ll));
+    } else {
+        printf("Error: Invalid expression - remaining elements in stack\n");
+    }
+    
+    freeList(ll);  // Free any remaining memory
+    return 0;
 }
