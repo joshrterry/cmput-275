@@ -89,5 +89,5 @@ int main() {
     }
 
     printf("%d\n", pop(ll));
-
+    free(ll);
 }
